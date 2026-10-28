@@ -1,0 +1,2 @@
+import { db } from '@/lib/store';import { apiScope,apiJson } from '@/lib/api';
+export async function GET(req:Request){try{const s=await apiScope(req);if(!s)return apiJson({error:'invalid_api_key'},401);const r=await db().prepare(`SELECT * FROM units WHERE id IN (${s.unitIds.map(()=>'?').join(',')}) ORDER BY id`).bind(...s.unitIds).all();return apiJson({data:r.results,apiVersion:'v1'});}catch{return apiJson({error:'service_unavailable'},503);}}
